@@ -63,6 +63,28 @@ def writeCSV(filename, price_list):
         csv_writer.writeheader()
         csv_writer.writerows(price_list)
 
+def seperateList(prefix, price_list, N=None):
+    sz00_list=[]
+    sz30_list=[]
+    sh60_list=[]
+    sh688_list=[]
+    for item in price_list:
+        secucode=item['SECUCODE']
+        # price=item['f2']
+        if secucode.startswith('0'):
+            sz00_list.append(item)
+        elif secucode.startswith('3'):
+            sz30_list.append(item)
+        elif secucode.startswith('60'):
+            sh60_list.append(item)
+        elif secucode.startswith('688'):
+            sh688_list.append(item)
+
+    writeCSV(f'output/{prefix}-sz00.csv', sz00_list[:N])
+    writeCSV(f'output/{prefix}-sz30.csv', sz30_list[:N])
+    writeCSV(f'output/{prefix}-sh60.csv', sh60_list[:N])
+    writeCSV(f'output/{prefix}-sh688.csv', sh688_list[:N])
+
 # %%
 if __name__ == "__main__":
     argvs=sys.argv
@@ -77,4 +99,6 @@ if __name__ == "__main__":
     print('begin crawler')
     price_list=get_stockfile(stockfile)
     writeCSV("output/eastmoney_price_3s.csv",price_list)
+    prefix=stockfile[6:-4]
+    seperateList(prefix, price_list)
     print('end crawler')
