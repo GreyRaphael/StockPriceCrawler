@@ -2,6 +2,7 @@
 import requests
 import time
 import csv
+import sys
 import os
 
 # %%
@@ -64,5 +65,16 @@ def writeCSV(filename, price_list):
 
 # %%
 if __name__ == "__main__":
-    price_list=get_stockfile('input/stocks.txt')
+    argvs=sys.argv
+    if len(argvs)==1:
+        stockfile='input/stocks.txt'
+    elif len(argvs)==2:
+        stockfile=argvs[1]
+    else:
+        print('to many arguments')
+        sys.exit(0)
+    
+    print('begin crawler')
+    price_list=get_stockfile(stockfile)
     writeCSV("output/eastmoney_price_3s.csv",price_list)
+    print('end crawler')
