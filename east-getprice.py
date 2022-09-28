@@ -64,5 +64,5 @@ def writeCSV(filename, price_list):
 
 # %%
 if __name__ == "__main__":
-    price_list=get_stockfile('stocks.txt')
-    writeCSV("eastmoney_price_3s.csv",price_list)
+    price_list=get_stockfile('input/stocks.txt')
+    writeCSV("output/eastmoney_price_3s.csv",price_list)
