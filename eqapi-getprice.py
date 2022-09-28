@@ -2,6 +2,7 @@ import configparser
 import csv
 import eqapi
 import quotedata
+import sys
 
 class MyRqApp(eqapi.RqApplication):
     def __init__(self, conf='config.ini', mode='binary'):
@@ -102,11 +103,20 @@ class MyRqApp(eqapi.RqApplication):
         return [setting0, setting1]
 
 if (__name__ == '__main__'):
+    argvs=sys.argv
+    if len(argvs)==1:
+        stockfile='input/stocks.txt'
+    elif len(argvs)==2:
+        stockfile=argvs[1]
+    else:
+        print('to many arguments')
+        sys.exit(0)
+
     rqapp = MyRqApp()
     rqapp.start()
     if rqapp.state() == eqapi.EqState.EQ_STATE_CONNECT:
         # get simple price list
-        rqapp.getLastPrice('stocks.txt')
+        rqapp.getLastPrice(stockfile)
         rqapp.writeCSV('output.csv')
 
         # # 价格低，成交量低的股票
