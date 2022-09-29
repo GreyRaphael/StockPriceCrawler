@@ -42,6 +42,7 @@ def get_price(codeinfo):
 
     timestamp_end=int(time.time()*1000)
     timestamp_start=timestamp_end-1
+    # 10档行情也在push2ex.eastmoney.com, f31~f12
     url=f'http://push2ex.eastmoney.com/getStockFenShi?pagesize=1&ut=7eea3edcaed734bea9cbfc24409ed989&dpt=wzfscj&pageindex=0&sort=2&ft=1&cb=jQuery351015686815628587114_{timestamp_start}&code={code}&market={market}&_={timestamp_end}'
     # print(url)
     rand_headers=generate_headers()
