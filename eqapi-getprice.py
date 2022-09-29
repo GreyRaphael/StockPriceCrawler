@@ -5,7 +5,7 @@ import quotedata
 import sys
 
 class MyRqApp(eqapi.RqApplication):
-    def __init__(self, conf='config.ini', mode='binary'):
+    def __init__(self, conf='config/config.ini', mode='binary'):
         settings=self._readConfig(conf, mode)
         super().__init__(settings)
         self.price_list=[]
