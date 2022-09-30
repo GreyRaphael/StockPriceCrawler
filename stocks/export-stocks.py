@@ -2,8 +2,8 @@ import pandas as pd
 import os
 
 DataframeDict={}
-for name in os.listdir('stocks'):
-    filename=f'stocks/{name}'
+for name in os.listdir('.'):
+    filename=f'./{name}'
     key=name.split('.')[0]
     if name.startswith('sh'):
         DataframeDict[key]=pd.read_excel(filename,  dtype={'A股代码':'str'}, parse_dates=[4,])
