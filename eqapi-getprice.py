@@ -117,7 +117,7 @@ if (__name__ == '__main__'):
     if rqapp.state() == eqapi.EqState.EQ_STATE_CONNECT:
         # get simple price list
         rqapp.getLastPrice(stockfile)
-        rqapp.writeCSV('output.csv')
+        rqapp.writeCSV('output/eqapi-out.csv')
 
         # # 价格低，成交量低的股票
         # rqapp.get_top5_prices_volumes('stocks.txt', 'buy')
