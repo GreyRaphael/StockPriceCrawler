@@ -81,12 +81,12 @@ def writeCSV(filename, stock_list):
 def get_st_stock():
     stock_list=get_stocklist(StockTypeInfo=INFO['st'])
     seperated_list=seperate_stocks(stock_list, key='name', num=10)
-    writeCSV('st.csv', seperated_list)
+    writeCSV('output/st.csv', seperated_list)
 
 def get_new_stocks():
     stock_list=get_stocklist(StockTypeInfo=INFO['new'])
     seperated_list=seperate_stocks(stock_list,key='launch', num=5)
-    writeCSV('new.csv', seperated_list)
+    writeCSV('output/new.csv', seperated_list)
 
 if __name__ == "__main__":
     get_new_stocks()
