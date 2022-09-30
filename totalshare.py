@@ -53,7 +53,8 @@ def get_totalshare(codeinfo):
     close_price=jData['data']['f43']
     total_asset=jData['data']['f116']
     total_share=int(total_asset/close_price)
-    return {'SECUCODE': secucode, 'Name': name,'TotalShare': total_share}
+    limit_share=total_share//1000 # 小于等于改值不触发集中度风控;大于该值触发集中度风控;
+    return {'SECUCODE': secucode, 'Name': name,'TotalShare': total_share, 'LimitShare':limit_share}
 
 
 def get_detaillist(code_list):
@@ -62,8 +63,9 @@ def get_detaillist(code_list):
 
 
 def writeCSV(filename, detail_list):
+    colNames=detail_list[0].keys()
     with open(filename,'w',encoding='utf8',newline='') as file:
-        csv_writer=csv.DictWriter(file, ['SECUCODE','Name','TotalShare'])
+        csv_writer=csv.DictWriter(file, fieldnames=colNames)
         csv_writer.writeheader()
         csv_writer.writerows(detail_list)
 
