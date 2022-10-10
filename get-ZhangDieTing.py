@@ -80,6 +80,7 @@ def get_DieTing():
     writeCSV('output/dieT.csv', seperated_list)
 
 if __name__ == "__main__":
+    # 数据源: http://quote.eastmoney.com/ztb/
     print('begin crawler')
     get_ZhangTing()
     get_DieTing()
