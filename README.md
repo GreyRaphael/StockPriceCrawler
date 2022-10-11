@@ -22,8 +22,8 @@ python get-ZhangDieTing.py
 python get-new-st.py
 
 # 多线程获取股票价格
-python thread-east-getprice.py
+python get-price-thread.py
 
-# 获取总股本，测试集中度
-python get-share.py
+# 多线程获取总股本，测试集中度
+python get-share-thread.py
 ```
