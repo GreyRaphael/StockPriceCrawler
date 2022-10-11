@@ -56,19 +56,19 @@ def get_sharelist(code_list):
     with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
         return executor.map(get_share, code_list)
     
-def writeCSV(filename, detail_list):
-    colNames=detail_list[0].keys()
+def writeCSV(filename, share_list):
+    colNames=share_list[0].keys()
     with open(filename,'w',encoding='utf8',newline='') as file:
         csv_writer=csv.DictWriter(file, fieldnames=colNames)
         csv_writer.writeheader()
-        csv_writer.writerows(detail_list)
+        csv_writer.writerows(share_list)
 
-def seperateList(detail_list, N=None):
+def seperateList(share_list, N=None):
     sz00_list=[]
     sz30_list=[]
     sh60_list=[]
     sh688_list=[]
-    for item in detail_list:
+    for item in share_list:
         secucode=item['SECUCODE']
         # price=item['f2']
         if secucode.startswith('0'):
@@ -81,13 +81,13 @@ def seperateList(detail_list, N=None):
             sh688_list.append(item)
 
     if sz00_list:
-        writeCSV(f'output/details-sz00.csv', sz00_list[:N])
+        writeCSV(f'output/shares-sz00.csv', sz00_list[:N])
     if sz30_list:
-        writeCSV(f'output/details-sz30.csv', sz30_list[:N])
+        writeCSV(f'output/shares-sz30.csv', sz30_list[:N])
     if sh60_list:
-        writeCSV(f'output/details-sh60.csv', sh60_list[:N])
+        writeCSV(f'output/shares-sh60.csv', sh60_list[:N])
     if sh688_list:
-        writeCSV(f'output/details-sh688.csv', sh688_list[:N])
+        writeCSV(f'output/shares-sh688.csv', sh688_list[:N])
 
 if __name__ == "__main__":
     argvs=sys.argv
@@ -112,5 +112,5 @@ if __name__ == "__main__":
     share_list.sort(key=lambda x: x['TotalShare'], reverse=True) # 总股本排序
 
     # write2csv
-    writeCSV("output/details.csv",share_list)
+    writeCSV("output/shares.csv",share_list)
     seperateList(share_list)
