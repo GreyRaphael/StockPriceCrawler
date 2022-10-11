@@ -63,14 +63,14 @@ def get_pricelist(code_list):
 
 
 def writeCSV(filename, price_list):
+    colNames=price_list[0].keys()
     with open(filename,'w',encoding='utf8',newline='') as file:
-        csv_writer=csv.DictWriter(file, ['SECUCODE','f2','f3'])
-        # csv_writer=csv.DictWriter(file, ['SECUCODE','f2'])
+        csv_writer=csv.DictWriter(file, fieldnames=colNames)
         csv_writer.writeheader()
         csv_writer.writerows(price_list)
 
 
-def seperateList(prefix, price_list, N=None):
+def seperateList(price_list, N=None):
     sz00_list=[]
     sz30_list=[]
     sh60_list=[]
@@ -87,10 +87,14 @@ def seperateList(prefix, price_list, N=None):
         elif secucode.startswith('688'):
             sh688_list.append(item)
 
-    writeCSV(f'output/{prefix}-sz00.csv', sz00_list[:N])
-    writeCSV(f'output/{prefix}-sz30.csv', sz30_list[:N])
-    writeCSV(f'output/{prefix}-sh60.csv', sh60_list[:N])
-    writeCSV(f'output/{prefix}-sh688.csv', sh688_list[:N])
+    if sz00_list:
+        writeCSV(f'output/price-sz00.csv', sz00_list[:N])
+    if sz30_list:
+        writeCSV(f'output/price-sz30.csv', sz30_list[:N])
+    if sh60_list:
+        writeCSV(f'output/price-sh60.csv', sh60_list[:N])
+    if sh688_list:
+        writeCSV(f'output/price-sh688.csv', sh688_list[:N])
 
 
 if __name__ == "__main__":
@@ -105,16 +109,16 @@ if __name__ == "__main__":
     
     print('begin crawler')
     code_list=get_codelist(stockfile)
+    # 数据源: http://quote.eastmoney.com/sz000002.html#fullScreenChart
     price_generator=get_pricelist(code_list)
+    print('end crawler')
 
     # generate list and sort
     price_list=list(price_generator)
     # price_list.sort(key=lambda x: x['SECUCODE'])
     # price_list.sort(key=lambda x: x['f2'])
-    # price_list.sort(key=lambda x: x['f3'], reverse=True) # 涨停
+    # price_list.sort(key=lambda x: x['f3'], reverse=True)
 
     # write2csv
-    writeCSV("output/eastmoney_price_3s.csv",price_list)
-    prefix=stockfile[6:-4]
-    seperateList(prefix, price_list)
-    print('end crawler')
+    writeCSV("output/price_eastmoney_3s.csv",price_list)
+    seperateList(price_list)
