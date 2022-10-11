@@ -101,7 +101,7 @@ if __name__ == "__main__":
     
     print('begin crawler')
     code_list=get_codelist(stockfile)
-    # data source: http://quote.eastmoney.com/sz000002.html
+    # 数据源: http://quote.eastmoney.com/sz000002.html
     share_generator=get_sharelist(code_list)
     print('end crawler')
 

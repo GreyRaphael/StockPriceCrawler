@@ -89,5 +89,6 @@ def get_new_stocks():
     writeCSV('output/new.csv', seperated_list)
 
 if __name__ == "__main__":
+    # 数据源: http://quote.eastmoney.com/center/gridlist.html
     get_new_stocks()
     get_st_stock()
