@@ -25,5 +25,5 @@ python get-new-st.py
 python thread-east-getprice.py
 
 # 获取总股本，测试集中度
-python totalshare.py
+python get-share.py
 ```
