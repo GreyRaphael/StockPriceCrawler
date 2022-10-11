@@ -120,5 +120,6 @@ if __name__ == "__main__":
     # price_list.sort(key=lambda x: x['f3'], reverse=True)
 
     # write2csv
+    print(f'price list length={len(price_list)}')
     writeCSV("output/price_eastmoney_3s.csv",price_list)
     seperateList(price_list)

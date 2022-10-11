@@ -29,7 +29,7 @@ def get_stocklist(StockTypeInfo):
     timestamp_start=timestamp_end-10
     for i in range(TotaPage):
         url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124004984617104929223_{timestamp_start}&pn={i+1}&pz=20&po={asc}&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid={sort_field}&fs=m:0+f:{tab},m:1+f:{tab}&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
-        print(url)
+        # print(url)
         txt=s.get(url).text[43:-2]
         jData=eval(txt)
         for item in jData['data']['diff']:
@@ -81,11 +81,13 @@ def writeCSV(filename, stock_list):
 def get_st_stock():
     stock_list=get_stocklist(StockTypeInfo=INFO['st'])
     seperated_list=seperate_stocks(stock_list, key='name', num=10)
+    print(f'ST length={len(seperated_list)}')
     writeCSV('output/st.csv', seperated_list)
 
 def get_new_stocks():
     stock_list=get_stocklist(StockTypeInfo=INFO['new'])
     seperated_list=seperate_stocks(stock_list,key='launch', num=5)
+    print(f'new stocks length={len(seperated_list)}')
     writeCSV('output/new.csv', seperated_list)
 
 if __name__ == "__main__":

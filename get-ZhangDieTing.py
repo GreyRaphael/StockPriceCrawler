@@ -72,11 +72,13 @@ def writeCSV(filename, stock_list):
 def get_ZhangTing():
     stock_list=get_stocklist('ZT')
     seperated_list=seperate_stocks(stock_list, key='f2', num=5)
+    print(f'涨停 length={len(seperated_list)}')
     writeCSV('output/zhangT.csv', seperated_list)
 
 def get_DieTing():
     stock_list=get_stocklist('DT')
     seperated_list=seperate_stocks(stock_list, key='f2', num=5)
+    print(f'跌停 length={len(seperated_list)}')
     writeCSV('output/dieT.csv', seperated_list)
 
 if __name__ == "__main__":
