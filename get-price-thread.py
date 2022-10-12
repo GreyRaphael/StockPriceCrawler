@@ -88,13 +88,13 @@ def seperateList(price_list, N=None):
             sh688_list.append(item)
 
     if sz00_list:
-        writeCSV(f'output/price-sz00.csv', sz00_list[:N])
+        writeCSV(f'output/sz00.csv', sz00_list[:N])
     if sz30_list:
-        writeCSV(f'output/price-sz30.csv', sz30_list[:N])
+        writeCSV(f'output/sz30.csv', sz30_list[:N])
     if sh60_list:
-        writeCSV(f'output/price-sh60.csv', sh60_list[:N])
+        writeCSV(f'output/sh60.csv', sh60_list[:N])
     if sh688_list:
-        writeCSV(f'output/price-sh688.csv', sh688_list[:N])
+        writeCSV(f'output/sh688.csv', sh688_list[:N])
 
 
 if __name__ == "__main__":
@@ -116,10 +116,10 @@ if __name__ == "__main__":
     # generate list and sort
     price_list=list(price_generator)
     # price_list.sort(key=lambda x: x['SECUCODE'])
-    # price_list.sort(key=lambda x: x['f2'])
+    price_list.sort(key=lambda x: x['f2'])
     # price_list.sort(key=lambda x: x['f3'], reverse=True)
 
     # write2csv
     print(f'price list length={len(price_list)}')
     writeCSV("output/price_eastmoney_3s.csv",price_list)
-    seperateList(price_list)
+    seperateList(price_list, 5)
