@@ -29,4 +29,7 @@ python get-share-thread.py
 
 # 多线程生产opfile.csv
 python get-opfile-thread.py
+
+# 改变output/*.csv的中的价格
+python change-price.py
 ```
