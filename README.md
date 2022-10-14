@@ -26,4 +26,7 @@ python get-price-thread.py
 
 # 多线程获取总股本，测试集中度
 python get-share-thread.py
+
+# 多线程生产opfile.csv
+python get-opfile-thread.py
 ```
