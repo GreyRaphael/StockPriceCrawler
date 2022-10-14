@@ -50,11 +50,8 @@ def get_price(codeinfo):
     txt = s.get(url).text[42:-2]
     jData=eval(txt)
     
-    preclose=jData['data']['cp']
     lastprice=jData['data']['data'][0]['p']
-    # lastvolume=jData['data']['data'][0]['v']
-    f3=round(100*(lastprice/preclose-1), 2)
-    return {'SECUCODE': secucode, 'f2': lastprice/1000, 'f3': f3}
+    return {'priceType': 1, 'direction': 1, 'volume': 100, 'SECUCODE': secucode, 'f2': lastprice/1000}
 
 
 def get_pricelist(code_list):
@@ -87,14 +84,7 @@ def seperateList(price_list, N=None):
         elif secucode.startswith('688'):
             sh688_list.append(item)
 
-    if sz00_list:
-        writeCSV(f'output/sz00.csv', sz00_list[:N])
-    if sz30_list:
-        writeCSV(f'output/sz30.csv', sz30_list[:N])
-    if sh60_list:
-        writeCSV(f'output/sh60.csv', sh60_list[:N])
-    if sh688_list:
-        writeCSV(f'output/sh688.csv', sh688_list[:N])
+    return sz00_list[:N]+sz30_list[:N]+sh60_list[:N]+sh688_list[:N]
 
 
 if __name__ == "__main__":
@@ -121,10 +111,10 @@ if __name__ == "__main__":
     # generate list and sort
     price_list=list(price_generator)
     # price_list.sort(key=lambda x: x['SECUCODE'])
-    price_list.sort(key=lambda x: x['f2'])
+    # price_list.sort(key=lambda x: x['f2'])
     # price_list.sort(key=lambda x: x['f3'], reverse=True)
 
     # write2csv
-    print(f'price list length={len(price_list)}')
-    writeCSV("output/price_eastmoney_3s.csv",price_list)
-    seperateList(price_list, N=seperate_num)
+    output_list = seperateList(price_list, N=seperate_num)
+    print(f'output list length={len(output_list)}')
+    writeCSV("output/opfile.csv",output_list)
