@@ -51,10 +51,13 @@ def get_price(codeinfo):
     jData=eval(txt)
     
     preclose=jData['data']['cp']
-    lastprice=jData['data']['data'][0]['p']
-    # lastvolume=jData['data']['data'][0]['v']
-    f3=round(100*(lastprice/preclose-1), 2)
-    return {'SECUCODE': secucode, 'f2': lastprice/1000, 'f3': f3}
+    if preclose == 0:
+        print(code, '无行情')
+    else:
+        lastprice=jData['data']['data'][0]['p']
+        # lastvolume=jData['data']['data'][0]['v']
+        f3=round(100*(lastprice/preclose-1), 2)
+        return {'SECUCODE': secucode, 'f2': lastprice/1000, 'f3': f3}
 
 
 def get_pricelist(code_list):
@@ -119,7 +122,8 @@ if __name__ == "__main__":
     print('end crawler')
 
     # generate list and sort
-    price_list=list(price_generator)
+    # price_list=list(price_generator)
+    price_list=[item for item in price_generator if item] # 过滤为None的值
     # price_list.sort(key=lambda x: x['SECUCODE'])
     price_list.sort(key=lambda x: x['f2'])
     # price_list.sort(key=lambda x: x['f3'], reverse=True)
