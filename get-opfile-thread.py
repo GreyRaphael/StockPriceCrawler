@@ -10,15 +10,15 @@ os.environ['NO_PROXY']='push2ex.eastmoney.com' # bypass Clash Proxy
 s=requests.Session()
 
 
-def get_codelist(stock_file):
+def get_codelist(stock_file, direction, volume):
     code_list=[]
     with open(stock_file,'r',encoding='utf8') as file:
         for line in file:
             code = line.rstrip('\n')
             if code.startswith('0') or code.startswith('3'):
-                code_list.append((0, code))
+                code_list.append((0, code, direction, volume))
             elif code.startswith('6'):
-                code_list.append((1, code))
+                code_list.append((1, code, direction, volume))
     return code_list
 
 
@@ -37,7 +37,7 @@ def generate_headers():
 
 
 def get_price(codeinfo):
-    market, code = codeinfo
+    market, code, direction, vol = codeinfo
     secucode = f'{code}.SZ' if market==0 else f'{code}.SH'
 
     timestamp_end=int(time.time()*1000)
@@ -50,8 +50,12 @@ def get_price(codeinfo):
     txt = s.get(url).text[42:-2]
     jData=eval(txt)
     
-    lastprice=jData['data']['data'][0]['p']
-    return {'priceType': 1, 'direction': 1, 'volume': 100, 'SECUCODE': secucode, 'f2': lastprice/1000}
+    preclose=jData['data']['cp']
+    if preclose == 0:
+        print(code, '无行情')
+    else:
+        lastprice=jData['data']['data'][0]['p']
+        return {'priceType': 1, 'direction': direction, 'volume': vol, 'SECUCODE': secucode, 'f2': lastprice/1000}
 
 
 def get_pricelist(code_list):
@@ -89,27 +93,40 @@ def seperateList(price_list, N=None):
 
 if __name__ == "__main__":
     argvs=sys.argv
+
     stockfile='input/stocks.txt'
+    direction = 1
+    volume = 100
     seperate_num=None
+
     if len(argvs)==1:
         pass
     elif len(argvs)==2:
         stockfile=argvs[1]
     elif len(argvs)==3:
         stockfile=argvs[1]
-        seperate_num=int(argvs[2])
+        direction=int(argvs[2])
+    elif len(argvs)==4:
+        stockfile=argvs[1]
+        direction=int(argvs[2])
+        volume=int(argvs[3])
+    elif len(argvs)==5:
+        stockfile=argvs[1]
+        direction=int(argvs[2])
+        volume=int(argvs[3])
+        seperate_num=int(argvs[4])
     else:
         print('to many arguments')
         sys.exit(0)
     
     print('begin crawler')
-    code_list=get_codelist(stockfile)
+    code_list=get_codelist(stockfile, direction, volume)
     # 数据源: http://quote.eastmoney.com/sz000002.html#fullScreenChart
     price_generator=get_pricelist(code_list)
     print('end crawler')
 
     # generate list and sort
-    price_list=list(price_generator)
+    price_list=[item for item in price_generator if item] # 过滤为None的值
     # price_list.sort(key=lambda x: x['SECUCODE'])
     # price_list.sort(key=lambda x: x['f2'])
     # price_list.sort(key=lambda x: x['f3'], reverse=True)
