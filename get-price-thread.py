@@ -130,5 +130,5 @@ if __name__ == "__main__":
 
     # write2csv
     print(f'price list length={len(price_list)}')
-    writeCSV("output/price_eastmoney_3s.csv",price_list)
+    writeCSV("output/price-all-3s.csv",price_list)
     seperateList(price_list, N=seperate_num)
