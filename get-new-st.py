@@ -17,32 +17,26 @@ os.environ['NO_PROXY']='push2.eastmoney.com' # bypass Clash Proxy
 s=requests.Session()
 s.headers.update(HEADERS)
 
-INFO={
-    'new':(5,8,1,'f26'), # 新股总共19页,这里为了速度改为5
-    'st':(8,4,0,'f2')
-}
+def get_stock_numbers(ini_url):
+    txt=s.get(ini_url).text[42:-2]
+    jData=eval(txt)
+    return jData['data']['total']
 
-def get_stocklist(StockTypeInfo):
-    TotaPage, tab, asc, sort_field = StockTypeInfo
+def get_stocklist(url):
     stocklist=[]
-    timestamp_end=int(time.time()*1000)
-    timestamp_start=timestamp_end-10
-    for i in range(TotaPage):
-        url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124004984617104929223_{timestamp_start}&pn={i+1}&pz=20&po={asc}&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid={sort_field}&fs=m:0+f:{tab},m:1+f:{tab}&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
-        # print(url)
-        txt=s.get(url).text[43:-2]
-        jData=eval(txt)
-        for item in jData['data']['diff']:
-            if item['f2']=='-': continue
-            temp={}
-            code = item['f12']
-            secucode = f'{code}.SH' if code.startswith('6') else f'{code}.SZ'
-            temp['SECUCODE']=secucode
-            temp['name']=item['f14']
-            temp['launch']=item['f26']
-            temp['f2']=item['f2']
-            temp['f3']=item['f3']
-            stocklist.append(temp)
+    txt=s.get(url).text[42:-2]
+    jData=eval(txt)
+    for item in jData['data']['diff']:
+        if item['f2']=='-': continue
+        temp={}
+        code = item['f12']
+        secucode = f'{code}.SH' if code.startswith('6') else f'{code}.SZ'
+        temp['SECUCODE']=secucode
+        temp['name']=item['f14']
+        temp['launch']=item['f26']
+        temp['f2']=item['f2']
+        temp['f3']=item['f3']
+        stocklist.append(temp)
     return stocklist
 
 def seperate_stocks(stock_list, key, num):
@@ -78,19 +72,33 @@ def writeCSV(filename, stock_list):
         csv_writer.writeheader()
         csv_writer.writerows(stock_list)
 
-def get_st_stock():
-    stock_list=get_stocklist(StockTypeInfo=INFO['st'])
-    seperated_list=seperate_stocks(stock_list, key='name', num=10)
-    print(f'ST length={len(seperated_list)}')
-    writeCSV('output/st.csv', seperated_list)
+def get_new():
+    timestamp_end=int(time.time()*1000)
+    timestamp_start=timestamp_end-10
+    
+    ini_url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112407274305058214278_{timestamp_start}&pn=1&pz=1&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f26&fs=m:0+f:8,m:1+f:8&fields=f2,f3,f12,f14,f26&_={timestamp_end}'
+    total_numbers=get_stock_numbers(ini_url)
 
-def get_new_stocks():
-    stock_list=get_stocklist(StockTypeInfo=INFO['new'])
+    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112407274305058214278_{timestamp_start+20}&pn=1&pz={total_numbers}&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f26&fs=m:0+f:8,m:1+f:8&fields=f2,f3,f12,f14,f26&_={timestamp_end+20}'
+    stock_list =  get_stocklist(url)
     seperated_list=seperate_stocks(stock_list,key='launch', num=5)
     print(f'new stocks length={len(seperated_list)}')
     writeCSV('output/new.csv', seperated_list)
 
+def get_st():
+    timestamp_end=int(time.time()*1000)
+    timestamp_start=timestamp_end-10
+    
+    ini_url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112407274305058214278_{timestamp_start}&pn=1&pz=1&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f12&fs=m:0+f:4,m:1+f:4&fields=f2,f3,f12,f14,f26&_={timestamp_end}'
+    total_numbers=get_stock_numbers(ini_url)
+
+    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112407274305058214278_{timestamp_start}&pn=1&pz={total_numbers}&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f12&fs=m:0+f:4,m:1+f:4&fields=f2,f3,f12,f14,f26&_={timestamp_end}'
+    stock_list =  get_stocklist(url)
+    seperated_list=seperate_stocks(stock_list, key='name', num=10)
+    print(f'ST length={len(seperated_list)}')
+    writeCSV('output/st.csv', seperated_list)
+
 if __name__ == "__main__":
     # 数据源: http://quote.eastmoney.com/center/gridlist.html
-    get_new_stocks()
-    get_st_stock()
+    get_new()
+    get_st()
