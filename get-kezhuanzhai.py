@@ -18,15 +18,10 @@ os.environ['NO_PROXY']='push2.eastmoney.com' # bypass Clash Proxy
 s=requests.Session()
 s.headers.update(HEADERS)
 
-def get_total_numbers(ini_url, start=42):
-    txt=s.get(ini_url).text[start:-2]
-    jData=eval(txt)
-    return jData['data']['total']
 
-
-def get_stocklist(url, start=42):
+def get_stocklist(url):
     stocklist=[]
-    txt=s.get(url).text[start:-2]
+    txt=s.get(url).text[42:-2]
     jData=eval(txt)
     for item in jData['data']['diff']:
         if item['f2']=='-': continue
@@ -50,28 +45,22 @@ def get_sh_kzz(num=5):
     timestamp_end=int(time.time()*1000)
     timestamp_start=timestamp_end-10
     
-    ini_url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112405834242064147962_{timestamp_start}&pn=1&pz=1&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f2&fs=m:1+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
-    total_numbers=get_total_numbers(ini_url, 42)
-
-    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112405834242064147962_{timestamp_start+20}&pn=1&pz={total_numbers//4}&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f2&fs=m:1+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end+20}'
-    stock_list =  get_stocklist(url, 42)
-    print(f'new stocks length={len(stock_list)}')
-    writeCSV('output/sh_kzz.csv', stock_list[:5])
+    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112401526498087249718_{timestamp_start}&pn=1&pz=20&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=2244395662925824|0|1|0|web&fid=f2&fs=m:1+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
+    print(url)
+    stock_list =  get_stocklist(url)
+    print(f'sh_kzz length={len(stock_list)}')
+    writeCSV('output/sh_kzz.csv', stock_list[:num])
 
 
 def get_sz_kzz(num=5):
     timestamp_end=int(time.time()*1000)
     timestamp_start=timestamp_end-10
     
-    ini_url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124011940983944937822_{timestamp_start}&pn=1&pz=1&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f2&fs=m:0 b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
-    total_numbers=get_total_numbers(ini_url, 43)
-    print(total_numbers)
-
-    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124011940983944937822_{timestamp_start}&pn=1&pz=100&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f2&fs=m:0 b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
+    url=f'http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112403947398714430955_{timestamp_start}&pn=1&pz=20&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=2244395662925824|0|1|0|web&fid=f2&fs=m:0+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}'
     print(url)
-    stock_list =  get_stocklist(url, 43)
-    print(f'new stocks length={len(stock_list)}')
-    writeCSV('output/sz_kzz.csv', stock_list[:5])
+    stock_list =  get_stocklist(url)
+    print(f'sz_kzz length={len(stock_list)}')
+    writeCSV('output/sz_kzz.csv', stock_list[:num])
 
 if __name__ == "__main__":
     # 数据源:
