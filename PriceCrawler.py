@@ -90,8 +90,8 @@ class PriceProvider:
                 self.writeCSV(f"output/sh60.csv", sh60_list[:N])
             if sh688_list:
                 self.writeCSV(f"output/sh688.csv", sh688_list[:N])
-        
-        return sz00_list[:N]+sz30_list[:N]+sh60_list[:N]+sh688_list[:N]
+
+        return sz00_list[:N] + sz30_list[:N] + sh60_list[:N] + sh688_list[:N]
 
 
 if __name__ == "__main__":

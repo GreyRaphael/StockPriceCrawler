@@ -1,6 +1,7 @@
 import sys
 from PriceCrawler import PriceProvider
 
+
 def get_codelist(stock_file, direction, volume):
     code_list = []
     with open(stock_file, "r", encoding="utf8") as file:
@@ -55,12 +56,11 @@ if __name__ == "__main__":
 
     code_list = get_codelist(stockfile, direction, volume)
     print("begin crawler")
-    obj=PriceProvider(code_list)
-    price_list= obj.get_pricelist()
-    price_list.sort(key=lambda x: x['f2'])
+    obj = PriceProvider(code_list)
+    price_list = obj.get_pricelist()
+    price_list.sort(key=lambda x: x["f2"])
     print("end crawler")
 
-    
     # write2csv
     output_list = obj.seperateList(price_list, N=seperate_num, writeFlag=False)
     print(f"output list length={len(output_list)}")
