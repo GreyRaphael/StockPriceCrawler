@@ -111,7 +111,7 @@ if __name__ == "__main__":
         sys.exit(0)
     
     print('begin crawler')
-    code_list=get_codelist('input/hold.csv', direction, volume)
+    code_list=get_codelist('/home/gewei/i2swap/build/bin/output/hold.csv', direction, volume)
     # 数据源: http://quote.eastmoney.com/sz000002.html#fullScreenChart
     price_generator=get_pricelist(code_list)
     print('end crawler')
