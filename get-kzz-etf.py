@@ -21,7 +21,10 @@ s.headers.update(HEADERS)
 
 def get_stocklist(url, key, direction, volume):
     stocklist = []
-    txt = s.get(url).text[43:-2]
+    raw_text = s.get(url).text
+    pos = raw_text.find("{")
+    print("-" * 50, pos)
+    txt = raw_text[pos:-2]
     jData = eval(txt)
     for item in jData["data"]["diff"]:
         if item["f2"] == "-":
@@ -58,16 +61,43 @@ def writeCSV(filename, stock_list):
         csv_writer.writerows(stock_list)
 
 
+def get_kzz(num=5):
+    timestamp_end = int(time.time() * 1000)
+    timestamp_start = timestamp_end - 10
+
+    # sh, kezhuanzhai
+    sh_url = f"http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112401526498087249718_{timestamp_start}&pn=1&pz=20&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=2244395662925824|0|1|0|web&fid=f2&fs=m:1+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}"
+    # print(sh_url)
+    # 可转债一手10股11开头是沪转债; 12开头是深转债
+    sh_kzz_list = get_stocklist(sh_url, key="11", direction=1, volume=10)
+    print(f"sh_kzz length={len(sh_kzz_list)}")
+
+    # sz, kezhuanzhai
+    sz_url = f"http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112403947398714430955_{timestamp_start}&pn=1&pz=20&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=2244395662925824|0|1|0|web&fid=f2&fs=m:0+b:MK0354&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152&_={timestamp_end}"
+    # print(sz_url)
+    sz_kzz_list = get_stocklist(sz_url, key="11", direction=1, volume=10)
+    print(f"sz_kzz length={len(sz_kzz_list)}")
+
+    writeCSV("output/kzz_opfile.csv", sh_kzz_list[:num] + sz_kzz_list[:num])
+
+
 def get_etf(num=5):
     timestamp_end = int(time.time() * 1000)
     timestamp_start = timestamp_end - 10
+
     url = f"http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124034072847823754293_{timestamp_start}&pn=1&pz=40&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=|0|0|0|web&fid=f2&fs=b:MK0021,b:MK0022,b:MK0023,b:MK0024&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f22,f11,f62,f128,f136,f115,f152&_={timestamp_end}"
     # ETF申购编号是12一手100份, 上交所以5开头，深交所以1开头
     stock_list = get_stocklist(url, key="5", direction=12, volume=100)
     seperated_list = seperate_list(stock_list, num)
     print(f"ETF length={len(seperated_list)}")
+
     writeCSV("output/etf-opfile.csv", seperated_list)
 
 
 if __name__ == "__main__":
+    # 数据源:
+    # http://quote.eastmoney.com/center/gridlist.html#bond_convertible_sh
+    # http://quote.eastmoney.com/center/gridlist.html#bond_convertible_sz
+    get_kzz()
+    # 数据源: http://quote.eastmoney.com/center/gridlist.html#fund_etf
     get_etf()
