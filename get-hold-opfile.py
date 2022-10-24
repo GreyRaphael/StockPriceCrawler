@@ -9,7 +9,9 @@ def get_codelist(hold_file, volume):
         reader = csv.DictReader(file)
         for record in reader:
             code = record["StockCode"]
-            vol = volume if volume else record["AvailableVolume"]
+            available_vol=eval(record["AvailableVolume"])
+            if not available_vol>0: continue
+            vol = volume if volume else available_vol
             if code.startswith("0") or code.startswith("3"):
                 code_list.append(
                     {
@@ -33,11 +35,15 @@ def get_codelist(hold_file, volume):
 
 if __name__ == "__main__":
     vol = None
+    seperate_num=5
 
     if len(sys.argv) == 1:
         pass
     elif len(sys.argv) == 2:
         vol = int(sys.argv[1])
+    elif len(sys.argv) == 3:
+        vol = int(sys.argv[1])
+        seperate_num=int(sys.argv[2])
     else:
         print("to many arguments")
         sys.exit(0)
@@ -50,6 +56,6 @@ if __name__ == "__main__":
     print("end crawler")
 
     # write2csv
-    output_list = obj.seperateList(price_list, writeFlag=False)
+    output_list = obj.seperateList(price_list, N=seperate_num, writeFlag=False)
     print(f"output list length={len(output_list)}")
-    obj.writeCSV("output/opfile.csv", output_list)
+    obj.writeCSV("output/opfile-hold.csv", output_list)
