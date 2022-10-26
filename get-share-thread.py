@@ -39,7 +39,7 @@ def get_share(codeinfo):
 
     timestamp_end=int(time.time()*1000)
     timestamp_start=timestamp_end-2
-    url=f'http://push2.eastmoney.com/api/qt/stock/get?invt=2&fltt=1&cb=jQuery351005883306005429367_{timestamp_start}&fields=f58,f84,f85&secid={market}.{code}&ut=fa5fd1943c7b386f172d6893dbfba10b&wbp2u=|0|0|0|web&_={timestamp_end}'
+    url=f'http://push2.eastmoney.com/api/qt/stock/get?invt=2&fltt=1&cb=jQuery351005883306005429367_{timestamp_start}&fields=f58,f84,f85,f116&secid={market}.{code}&ut=fa5fd1943c7b386f172d6893dbfba10b&wbp2u=|0|0|0|web&_={timestamp_end}'
     # print(url)
     rand_headers=generate_headers()
     s.headers.update(rand_headers)
@@ -47,9 +47,10 @@ def get_share(codeinfo):
     jData=eval(txt)
     name=jData['data']['f58'] # 股票简称
     total_share=int(jData['data']['f84']) # 总股本
+    total_value=int(jData['data']['f116']) # 总股本
     # circulate_share=jData['data']['f85'] # 流通股本
     limit_share=total_share//1000 # 持仓股本限制
-    return {'SECUCODE': secucode, 'Name': name,'TotalShare': total_share, 'LimitShare':limit_share}
+    return {'SECUCODE': secucode, 'Name': name,'TotalShare': total_share, 'LimitShare':limit_share, 'f2': round(total_value/total_share, 2), 'cost': total_value/1000}
 
 
 def get_sharelist(code_list):
@@ -89,12 +90,25 @@ def seperateList(share_list, N=None):
     if sh688_list:
         writeCSV(f'output/shares-sh688.csv', sh688_list[:N])
 
+def filter_stock(generator):
+    stock_list=[]
+    for item in generator:
+        if item['SECUCODE'].startswith('00') and item['LimitShare']<=1e6:
+            stock_list.append(item)
+        elif item['SECUCODE'].startswith('30') and item['LimitShare']<=3e5:
+            stock_list.append(item)
+        elif item['SECUCODE'].startswith('60') and item['LimitShare']<=1e6:
+            stock_list.append(item)
+        elif item['SECUCODE'].startswith('688') and item['LimitShare']<=1e5:
+            stock_list.append(item)
+    return stock_list
+
 if __name__ == "__main__":
-    argvs=sys.argv
-    if len(argvs)==1:
-        stockfile='input/stocks.txt'
-    elif len(argvs)==2:
-        stockfile=argvs[1]
+    stockfile='input/stocks.txt'
+    if len(sys.argv)==1:
+        pass
+    elif len(sys.argv)==2:
+        stockfile=sys.argv[1]
     else:
         print('to many arguments')
         sys.exit(0)
@@ -106,11 +120,13 @@ if __name__ == "__main__":
     print('end crawler')
 
     # generate list and sort
-    share_list=list(share_generator)
+    share_list=filter_stock(share_generator)
+    
     print(f"share_list length={len(share_list)}")
     # share_list.sort(key=lambda x: x['SECUCODE'])
-    share_list.sort(key=lambda x: x['TotalShare'], reverse=True) # 总股本排序
+    # share_list.sort(key=lambda x: x['TotalShare'], reverse=True) # 总股本排序
+    share_list.sort(key=lambda x: x['cost']) # 总股本排序
 
     # write2csv
     writeCSV("output/shares.csv",share_list)
-    seperateList(share_list)
+    seperateList(share_list, 5)
