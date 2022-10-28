@@ -7,11 +7,9 @@ def get_codelist(filename_list):
     sell_volume_list = [98, 99, 9, 101, 109, 202]
     record_lists = []
     for filename in filename_list:
-        record_list = []
         with open(f"output/{filename}", "r", encoding="utf8") as file:
             reader = csv.DictReader(file)
-            for record in reader:
-                record_list.append(record)
+            record_list=[record for record in reader]
         record_lists.append(record_list)
 
     dict_list = []
