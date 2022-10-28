@@ -53,13 +53,14 @@ class PriceProvider:
             return code_dict
 
     def get_pricelist(self):
+        # 数据源: http://quote.eastmoney.com/sz000002.html#fullScreenChart
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             price_generator = executor.map(self._get_price, self.code_list)
             return [item for item in price_generator if item]  # 过滤为None的值
 
     def writeCSV(self, filename, price_list):
-        if len(price_list)==0:
-            print('price list is empty!')
+        if len(price_list) == 0:
+            print("price list is empty!")
             return
         colNames = price_list[0].keys()
         with open(filename, "w", encoding="utf8", newline="") as file:
@@ -67,7 +68,7 @@ class PriceProvider:
             csv_writer.writeheader()
             csv_writer.writerows(price_list)
 
-    def seperateList(self, price_list, N=None, writeFlag=True):
+    def seperateList(self, price_list, N=None, writeFlag=True, prefix=''):
         sz00_list = []
         sz30_list = []
         sh60_list = []
@@ -86,19 +87,63 @@ class PriceProvider:
 
         if writeFlag:
             if sz00_list:
-                self.writeCSV(f"output/sz00.csv", sz00_list[:N])
+                self.writeCSV(f"output/{prefix}sz00.csv", sz00_list[:N])
             if sz30_list:
-                self.writeCSV(f"output/sz30.csv", sz30_list[:N])
+                self.writeCSV(f"output/{prefix}sz30.csv", sz30_list[:N])
             if sh60_list:
-                self.writeCSV(f"output/sh60.csv", sh60_list[:N])
+                self.writeCSV(f"output/{prefix}sh60.csv", sh60_list[:N])
             if sh688_list:
-                self.writeCSV(f"output/sh688.csv", sh688_list[:N])
+                self.writeCSV(f"output/{prefix}sh688.csv", sh688_list[:N])
 
         return sz00_list[:N] + sz30_list[:N] + sh60_list[:N] + sh688_list[:N]
 
+    def _get_share(self, code_dict):
+        secucode = code_dict["SECUCODE"]
+        code, mkt = secucode.split(".")
+        market = 0 if mkt == "SZ" else 1
+
+        timestamp_end = int(time.time() * 1000)
+        timestamp_start = timestamp_end - 4
+        url = f"http://push2.eastmoney.com/api/qt/stock/get?invt=2&fltt=1&cb=jQuery351005883306005429367_{timestamp_start}&fields=f58,f84,f85,f116&secid={market}.{code}&ut=fa5fd1943c7b386f172d6893dbfba10b&wbp2u=|0|0|0|web&_={timestamp_end}"
+        # print(url)
+        rand_headers = self._generate_headers()
+        self.s.headers.update(rand_headers)
+        txt = self.s.get(url).text[42:-2]
+        jData = eval(txt)
+
+        name = jData["data"]["f58"]  # 股票简称
+        total_share = int(jData["data"]["f84"])  # 总股本
+        total_value = int(jData["data"]["f116"])  # 总市值
+        # circulate_share=jData['data']['f85'] # 流通股本
+
+        code_dict["Name"] = name
+        code_dict["TotalShare"] = total_share
+        code_dict["LimitShare"] = total_share // 1000  # 持仓1‰股本
+        code_dict["f2"] = round(total_value / total_share, 2)
+        code_dict["cost"] = total_value / 1000
+        return code_dict
+
+    def get_sharelist(self):
+        # 数据源: http://quote.eastmoney.com/sz000002.html
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+            share_generator = executor.map(self._get_share, self.code_list)
+            # filter stock
+            share_list = []
+            for item in share_generator:
+                if item:  # 过滤为None的值
+                    secucode, limit_share = item["SECUCODE"], item["LimitShare"]
+                    if (
+                        (secucode.startswith("00") and limit_share <= 1e6)
+                        or (secucode.startswith("60") and limit_share <= 1e6)
+                        or (secucode.startswith("30") and limit_share <= 3e5)
+                        or (secucode.startswith("688") and limit_share <= 1e5)
+                    ):
+                        share_list.append(item)
+            return share_list
+
 
 if __name__ == "__main__":
-    # 数据源: http://quote.eastmoney.com/sz000002.html#fullScreenChart
+    # get price
     example_list = [
         {"SECUCODE": "000001.SZ"},
         {"SECUCODE": "300750.SZ"},
