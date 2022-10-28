@@ -9,7 +9,7 @@ os.environ["NO_PROXY"] = "push2ex.eastmoney.com"  # bypass Clash Proxy
 
 
 class PriceProvider:
-    """get price from"""
+    """get price from eastmoney"""
 
     def __init__(self, code_list):
         self.s = requests.Session()
