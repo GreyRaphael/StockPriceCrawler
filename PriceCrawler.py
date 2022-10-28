@@ -58,6 +58,9 @@ class PriceProvider:
             return [item for item in price_generator if item]  # 过滤为None的值
 
     def writeCSV(self, filename, price_list):
+        if len(price_list)==0:
+            print('price list is empty!')
+            return
         colNames = price_list[0].keys()
         with open(filename, "w", encoding="utf8", newline="") as file:
             csv_writer = csv.DictWriter(file, fieldnames=colNames)
