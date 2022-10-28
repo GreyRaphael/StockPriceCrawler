@@ -9,7 +9,7 @@ def get_codelist(filename_list):
     for filename in filename_list:
         with open(f"output/{filename}", "r", encoding="utf8") as file:
             reader = csv.DictReader(file)
-            record_list=[record for record in reader]
+            record_list = [record for record in reader]
         record_lists.append(record_list)
 
     dict_list = []
