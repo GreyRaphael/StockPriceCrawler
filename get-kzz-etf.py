@@ -78,7 +78,7 @@ def get_kzz(num=5):
     sz_kzz_list = get_stocklist(sz_url, key="11", direction=1, volume=10)
     print(f"sz_kzz length={len(sz_kzz_list)}")
 
-    writeCSV("output/kzz_opfile.csv", sh_kzz_list[:num] + sz_kzz_list[:num])
+    writeCSV("output/kzz-opfile.csv", sh_kzz_list[:num] + sz_kzz_list[:num])
 
 
 def get_etf(num=5):
