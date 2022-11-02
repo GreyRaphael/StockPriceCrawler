@@ -16,7 +16,7 @@ class PriceProvider:
         self.code_list = code_list
 
     def _generate_headers(self):
-        num = random.randint(90, 105)
+        num = random.randint(90, 106)
         return {
             "Host": "push2ex.eastmoney.com",
             "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:{num}.0) Gecko/20100101 Firefox/{num}.0",
