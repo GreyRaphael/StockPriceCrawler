@@ -2,6 +2,7 @@ import requests
 import time
 import csv
 import os
+from PriceCrawler import PriceProvider
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0",
@@ -106,7 +107,16 @@ def get_st():
     writeCSV("output/st.csv", seperated_list)
 
 
+def get_black():
+    code_list = [{"SECUCODE": "601066.SH"}]
+    obj = PriceProvider(code_list)
+    pirce_list = obj.get_pricelist()
+    print(f"black list length={len(pirce_list)}")
+    obj.writeCSV("output/blacklist.csv", pirce_list)
+
+
 if __name__ == "__main__":
     # 数据源: http://quote.eastmoney.com/center/gridlist.html
     get_new()
     get_st()
+    get_black()
