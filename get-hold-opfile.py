@@ -35,7 +35,7 @@ def get_codelist(hold_file, volume):
 
 if __name__ == "__main__":
     vol = None
-    seperate_num=5
+    seperate_num=None
 
     if len(sys.argv) == 1:
         pass
