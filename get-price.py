@@ -39,5 +39,5 @@ if __name__ == "__main__":
 
     # write2csv
     print(f"price list length={len(price_list)}")
-    obj.writeCSV("output/price-all-3s.csv", price_list)
-    obj.seperateList(price_list, N=seperate_num)
+    total_list=obj.seperateList(price_list, N=seperate_num, writeFlag=True)
+    obj.writeCSV("output/price-all-3s.csv", total_list)
