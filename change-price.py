@@ -10,7 +10,8 @@ def change_price(input_file, output_file):
             writer.writeheader()
             for record in reader:
                 price = eval(record['f2'])
-                new_price = round(price*(1+0.06), 2)
+                new_price = round(price*(1+0.11), 2)
+                # new_price = round(price*(1-0.11), 2)
                 record['f2'] = new_price
                 writer.writerow(record)
 
