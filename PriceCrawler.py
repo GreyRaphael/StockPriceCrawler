@@ -58,7 +58,8 @@ class PriceProvider:
             price_generator = executor.map(self._get_price, self.code_list)
             return [item for item in price_generator if item]  # 过滤为None的值
 
-    def writeCSV(self, filename, price_list):
+    @staticmethod
+    def writeCSV(filename, price_list):
         if len(price_list) == 0:
             print("price list is empty!")
             return
@@ -68,7 +69,8 @@ class PriceProvider:
             csv_writer.writeheader()
             csv_writer.writerows(price_list)
 
-    def seperateList(self, price_list, N=None, writeFlag=True, prefix=''):
+    @staticmethod
+    def seperateList(price_list, N=None, writeFlag=True, prefix=''):
         sz00_list = []
         sz30_list = []
         sh60_list = []
@@ -87,13 +89,13 @@ class PriceProvider:
 
         if writeFlag:
             if sz00_list:
-                self.writeCSV(f"output/{prefix}sz00.csv", sz00_list[:N])
+                PriceProvider.writeCSV(f"output/{prefix}sz00.csv", sz00_list[:N])
             if sz30_list:
-                self.writeCSV(f"output/{prefix}sz30.csv", sz30_list[:N])
+                PriceProvider.writeCSV(f"output/{prefix}sz30.csv", sz30_list[:N])
             if sh60_list:
-                self.writeCSV(f"output/{prefix}sh60.csv", sh60_list[:N])
+                PriceProvider.writeCSV(f"output/{prefix}sh60.csv", sh60_list[:N])
             if sh688_list:
-                self.writeCSV(f"output/{prefix}sh688.csv", sh688_list[:N])
+                PriceProvider.writeCSV(f"output/{prefix}sh688.csv", sh688_list[:N])
 
         return sz00_list[:N] + sz30_list[:N] + sh60_list[:N] + sh688_list[:N]
 
