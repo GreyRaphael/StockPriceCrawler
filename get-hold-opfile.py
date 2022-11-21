@@ -9,9 +9,10 @@ def get_codelist(hold_file, volume):
         reader = csv.DictReader(file)
         for record in reader:
             code = record["StockCode"]
-            available_vol=eval(record["AvailableVolume"])
-            if not available_vol>0: continue
-            vol = volume if volume else available_vol
+            available_vol = eval(record["AvailableVolume"])
+            if not available_vol > 0:
+                continue
+            vol = volume if (volume and volume < available_vol) else available_vol
             if code.startswith("0") or code.startswith("3"):
                 code_list.append(
                     {
@@ -35,7 +36,7 @@ def get_codelist(hold_file, volume):
 
 if __name__ == "__main__":
     vol = None
-    seperate_num=None
+    seperate_num = None
 
     if len(sys.argv) == 1:
         pass
@@ -43,12 +44,16 @@ if __name__ == "__main__":
         vol = int(sys.argv[1])
     elif len(sys.argv) == 3:
         vol = int(sys.argv[1])
-        seperate_num=int(sys.argv[2])
+        seperate_num = int(sys.argv[2])
     else:
         print("to many arguments")
         sys.exit(0)
 
-    code_list = get_codelist("/home/gewei/i2swap/build/bin/output/hold.csv", vol)
+    prefix_dir = '/home/gewei/i2swap/build/bin/output'
+    # code_list = get_codelist(f"{prefix_dir}/hold-2022101812.csv", vol) # double
+    # code_list = get_codelist(f"{prefix_dir}/hold-2022101113.csv", vol) # mainSH
+    code_list = get_codelist(f"{prefix_dir}/hold-2022101114.csv", vol) # mainSZ
+
     print("begin crawler")
     obj = PriceProvider(code_list)
     price_list = obj.get_pricelist()
