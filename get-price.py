@@ -33,8 +33,8 @@ if __name__ == "__main__":
     print("begin crawler")
     obj = PriceProvider(code_list)
     price_list = obj.get_pricelist()
-    # price_list.sort(key=lambda x: x["f2"])
-    price_list.sort(key=lambda x: x["f2"], reverse=True)
+    price_list.sort(key=lambda x: x["f2"])
+    # price_list.sort(key=lambda x: x["f2"], reverse=True)
     print("end crawler")
 
     # write2csv
