@@ -49,10 +49,11 @@ if __name__ == "__main__":
         print("to many arguments")
         sys.exit(0)
 
-    prefix_dir = '/home/gewei/i2swap/build/bin/output'
+    prefix_dir = "/home/gewei/i2swap/build/bin"
+    stock_account = "2022101811"
     # code_list = get_codelist(f"{prefix_dir}/hold-2022101812.csv", vol) # double
     # code_list = get_codelist(f"{prefix_dir}/hold-2022101113.csv", vol) # mainSH
-    code_list = get_codelist(f"{prefix_dir}/hold-2022101114.csv", vol) # mainSZ
+    code_list = get_codelist(f"{prefix_dir}/output/hold-{stock_account}.csv", vol)  # mainSZ
 
     print("begin crawler")
     obj = PriceProvider(code_list)
@@ -63,4 +64,4 @@ if __name__ == "__main__":
     # write2csv
     output_list = obj.seperateList(price_list, N=seperate_num, writeFlag=False)
     print(f"output list length={len(output_list)}")
-    obj.writeCSV("output/opfile-hold.csv", output_list)
+    obj.writeCSV(f"{prefix_dir}//StockPrice/opfile-{stock_account}.csv", output_list)
