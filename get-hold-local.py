@@ -50,7 +50,11 @@ if __name__ == "__main__":
         print("to many arguments")
         sys.exit(0)
 
-    price_list = get_codelist("output/hold.csv", vol)
+    # price_list = get_codelist("output/hold.csv", vol)
+    prefix_dir = "/home/gewei/i2swap/build/bin"
+    stock_account = "2022101811"
+
+    price_list = get_codelist(f"{prefix_dir}/output/hold-{stock_account}.csv", vol)
 
     # write2csv
     output_list = PriceProvider.seperateList(price_list, N=seperate_num, writeFlag=False)
